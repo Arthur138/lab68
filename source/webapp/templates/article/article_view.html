@@ -53,7 +53,17 @@
                                 <a href="{% url 'webapp:comment_delete' comment.pk %}"
                                    class="btn btn-danger px-5">Delete</a>
                             {% endif %}
+
                         </div>
+                    <div class="mt-2 d-flex">
+                        {% if request.user.is_authenticated %}
+                            <button class="btn btn-info" data-pk="{{ comment.pk }}" onclick="commentButtonClick(event)" id="baton_{{ comment.pk }}" data-link="{% url 'webapp:comment_like' comment.pk %}">
+                               {% if request.user in comment.comment_like.all %}Dislike{% endif %}
+                                {% if request.user not in comment.comment_like.all %}Like{% endif %}
+                            </button>
+                        {% endif %}
+                             <p class="ms-1" id="count_comment_{{ comment.pk }}">Likes {{ comment.get_comment_likes_count }}</p>
+                    </div>
                     </div>
                 </div>
             </div>

@@ -4,21 +4,31 @@ from django.urls import reverse_lazy
 from django.utils.http import urlencode
 from webapp.models import Article
 from webapp.forms import ArticleForm, SimpleSearchForm, ArticleDeleteForm
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 
 from django.views.generic import RedirectView, ListView, DetailView, CreateView, UpdateView, DeleteView, View
 
 
+# class TestView(View):
+#     def get(self, request, *args, **kwargs):
+#         response = JsonResponse({'test': 2, 'test2': [1,2,3]})
+#         response = JsonResponse({'ok': 'заебись'})
+#         response.status_code =200
+#         return response
 
-
-class TestView(View):
+class ArticleLikeView(View):
     def get(self, request, *args, **kwargs):
-        # response = JsonResponse({'test': 2, 'test2': [1,2,3]})
-        response = JsonResponse({'error': 'qweqweqweqwwe'})
-        response.status_code =400
-
+        user = request.user
+        article = get_object_or_404(Article, pk=self.kwargs.get('pk'))
+        if user in article.article_like.all():
+            article.article_like.remove(user)
+            response = JsonResponse({'get_like': article.get_likes_count() , 'type': 'dislike'})
+        else:
+            article.article_like.add(user)
+            response = JsonResponse({'get_like': article.get_likes_count() , 'type':'like'})
         return response
-
 
 class IndexViews(ListView):
     template_name = 'article/index.html'

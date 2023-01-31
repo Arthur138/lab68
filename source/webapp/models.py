@@ -13,7 +13,6 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
-
 class Article(models.Model):
     title = models.CharField(max_length=50, null=False, blank=False, verbose_name="Заголовок")
     content = models.TextField(max_length=3000, null=False, blank=False, verbose_name="Контент",
@@ -23,6 +22,7 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Время изменения")
     tags = models.ManyToManyField('webapp.Tag', related_name='articles', blank=True)
+    article_like = models.ManyToManyField(get_user_model(), related_name='article_like')
 
     class Meta:
         permissions = [
@@ -35,9 +35,11 @@ class Article(models.Model):
     def get_comments_count(self):
         return self.comments.count()
 
+    def get_likes_count(self):
+        return self.article_like.count()
+
     def __str__(self):
         return f'{self.pk}. {self.title}'
-
 
 class Comment(models.Model):
     text = models.TextField(max_length=400, verbose_name='Комментарий')
@@ -47,6 +49,10 @@ class Comment(models.Model):
                                verbose_name="Автор")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Время изменения")
+    comment_like = models.ManyToManyField(get_user_model(), related_name='comment_like')
 
     def __str__(self):
         return f'{self.pk}. {self.text[:20]}'
+
+    def get_comment_likes_count(self):
+        return self.comment_like.count()

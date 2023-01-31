@@ -1,5 +1,5 @@
 from django.contrib import admin
-from webapp.models import Article, Tag
+from webapp.models import Article, Tag, Comment
 
 
 class ArticleTagInlines(admin.TabularInline):
@@ -21,3 +21,4 @@ class ArticleAdmin(admin.ModelAdmin):
 
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(Tag)
+admin.site.register(Comment)
